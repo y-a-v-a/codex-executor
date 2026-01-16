@@ -7,14 +7,22 @@
 #   2 - Block operation (stderr message returned to Claude)
 #   Other - Undefined behavior
 
+# Check for jq dependency
+if ! command -v jq &> /dev/null; then
+  echo "Error: jq is required for command validation but not found in PATH" >&2
+  echo "Install jq: https://stedolan.github.io/jq/download/" >&2
+  exit 2
+fi
+
 # Read input JSON from stdin
 INPUT=$(cat)
 
 # Extract the bash command from the JSON
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
-# Check if this is a Codex command
-if ! echo "$COMMAND" | grep -q "^codex"; then
+# Check if this is a Codex command by looking for "codex" as a word boundary
+# This catches: codex, /path/to/codex, ./codex, ENV=val codex, etc.
+if ! echo "$COMMAND" | grep -qE '\bcodex\b'; then
   # Not a Codex command, allow it
   exit 0
 fi
