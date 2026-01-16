@@ -1,5 +1,9 @@
 # Codex Agent Quick Reference
 
+Complete reference for configuring and using the Codex agent.
+
+> **Usage Examples**: For workflow examples and common patterns, see [example-usage.md](./example-usage.md)
+
 ## File Locations
 
 | File | Purpose |

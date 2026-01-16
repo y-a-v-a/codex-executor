@@ -1,65 +1,28 @@
 # Claude Code Codex Agent
 
-This project contains an agent to be used with Claude Code. The agent puts OpenAI Codex to work with tasks. Claude Code can hand over these tasks to the Codex Agent.
+A Claude Code agent that delegates coding tasks to OpenAI Codex CLI.
 
 ## Quick Start
 
-The Codex executor agent is located at `.claude/agents/codex-executor.md` and is automatically available when using Claude Code in this directory.
+1. Install prerequisites: [Claude Code](https://code.claude.com) and [Codex CLI](https://developers.openai.com/codex/cli)
+2. The agent at `.claude/agents/codex-executor.md` is automatically available
+3. Ask Claude Code to perform coding tasks:
+   ```
+   "Create a REST API endpoint for user authentication"
+   "Refactor this module to use async/await"
+   ```
 
-### Usage
+The agent automatically delegates when appropriate, gathering context and executing Codex with the right flags.
 
-Simply ask Claude Code to perform coding tasks, and it will automatically delegate to the Codex agent when appropriate:
+## Key Files
 
-```
-"Create a REST API endpoint for user authentication"
-"Refactor this module to use async/await"
-"Analyze the codebase for security vulnerabilities"
-```
-
-Or explicitly request the agent:
-
-```
-"Use the codex-executor agent to implement a CSV parser"
-```
-
-See [example-usage.md](./example-usage.md) for detailed examples and usage patterns.
-
-## Agent Features
-
-- **Automatic delegation** - Claude Code knows when to use Codex
-- **Intelligent CLI usage** - Selects appropriate flags and sandbox settings
-- **Context gathering** - Reads relevant code before delegating
-- **Clear reporting** - Summarizes what Codex accomplished
-- **Error handling** - Retries with adjusted parameters on failure
-
-## Prerequisites
-
-- [Claude Code CLI](https://code.claude.com) installed and configured
-- [Codex CLI](https://developers.openai.com/codex/cli) installed and authenticated
-- Both CLIs should be in your PATH
-
-## File Structure
-
-```
-.
-├── .claude/
-│   ├── agents/
-│   │   └── codex-executor.md    # The Codex agent definition
-│   └── settings.local.json       # Project settings
-├── README.md                     # This file
-└── example-usage.md              # Usage examples and patterns
-```
+- `.claude/agents/codex-executor.md` - Agent definition
+- `.claude/settings.example.json` - Example configuration with safety hooks
+- `scripts/validate-codex-command.sh` - Command validation for safety
 
 ## Documentation
 
-- Agent documentation: https://code.claude.com/docs/en/sub-agents
-- Codex CLI reference: https://developers.openai.com/codex/cli/reference
-
-## Customization
-
-Edit `.claude/agents/codex-executor.md` to customize:
-- Tool access permissions
-- Model selection (sonnet, opus, haiku)
-- Permission modes
-- System prompt behavior
-- Workflow steps
+- **[QUICKREF.md](./QUICKREF.md)** - Complete reference: CLI flags, configuration, hooks, troubleshooting
+- **[example-usage.md](./example-usage.md)** - Usage patterns and workflow examples
+- [Claude Code agent docs](https://code.claude.com/docs/en/sub-agents)
+- [Codex CLI reference](https://developers.openai.com/codex/cli/reference)

@@ -2,6 +2,8 @@
 
 This document provides examples of how Claude Code can delegate tasks to the Codex agent.
 
+> **Reference**: For CLI flags, configuration options, and troubleshooting, see [QUICKREF.md](./QUICKREF.md)
+
 ## Automatic Delegation
 
 Claude Code will automatically use the codex-executor agent when you request coding tasks that would benefit from Codex's capabilities.
@@ -50,16 +52,6 @@ When a task is delegated to codex-executor:
 6. **Verifies** the results
 7. **Reports** back with a clear summary
 
-## Codex CLI Flags Used
-
-The agent intelligently selects flags based on the task:
-
-- **`--full-auto`** - For most development tasks (good balance of automation and safety)
-- **`--json`** - For tasks requiring structured output
-- **`--output-last-message`** - To capture and parse results
-- **`--search`** - When the task needs current information or best practices
-- **`--sandbox`** - Appropriate permission level based on task requirements
-
 ## Agent Benefits
 
 ✅ **Specialized expertise** - Focused on Codex CLI interaction
@@ -80,31 +72,16 @@ The agent intelligently selects flags based on the task:
 
 ## Viewing Available Agents
 
-Use the `/agents` command in Claude Code to:
-- View all available agents
-- See the codex-executor agent details
-- Create additional custom agents
-- Edit existing agents
+Use the `/agents` command in Claude Code to view all available agents.
 
 ## Background Execution
 
-For long-running tasks, you can request background execution:
+For long-running tasks, request background execution or press **Ctrl+B** during execution:
 
 ```
 User: "Run this in the background: use codex-executor to refactor the entire data layer"
 ```
 
-Or press **Ctrl+B** during execution to background the agent.
+---
 
-## Configuration
-
-The agent is located at:
-```
-.claude/agents/codex-executor.md
-```
-
-You can customize it by editing this file to adjust:
-- Tool access
-- Model selection
-- Permission modes
-- System prompt instructions
+> **Customization**: See [QUICKREF.md](./QUICKREF.md) for configuration options, CLI flags, hooks, and troubleshooting
