@@ -7,7 +7,7 @@ This guide explains how to test and verify the Codex executor agent.
 1. **Install Codex CLI**
    ```bash
    # Follow instructions at https://developers.openai.com/codex/cli
-   npm install -g @openai/codex-cli  # or similar
+   npm install -g @openai/codex  # or similar
    ```
 
 2. **Authenticate Codex**

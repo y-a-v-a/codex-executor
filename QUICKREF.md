@@ -165,7 +165,7 @@ For this project:
 
 ```bash
 # Install and authenticate Codex CLI
-npm install -g @openai/codex-cli
+npm install -g @openai/codex
 codex login
 codex login status
 

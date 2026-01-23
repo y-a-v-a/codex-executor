@@ -4,6 +4,18 @@ description: Delegate coding tasks to OpenAI Codex CLI for implementation. Use w
 tools: Bash, Read, Write, Edit, Glob, Grep
 model: sonnet
 permissionMode: default
+hooks:
+  SubagentStart:
+    - type: command
+      command: echo 'Starting Codex executor agent...' >&2
+  SubagentStop:
+    - type: command
+      command: echo 'Codex executor agent finished.' >&2
+  PreToolUse:
+    - matcher: Bash
+      hooks:
+        - type: command
+          command: ./scripts/validate-codex-command.sh
 ---
 
 You are a specialized agent that delegates coding tasks to OpenAI Codex via the Codex CLI.
