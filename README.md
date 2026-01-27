@@ -31,11 +31,12 @@ Set permissions correctly in `~/.claude/settings.json` or on project level from 
 }
 ```
 
-Now one can ask Claude Code to offload a tast to the subagent codex:
-   ```
-   "Use the codex-executor to create a REST API endpoint for user authentication"
-   "Refactor this module to use async/await using the codex-executor agent"
-   ```
+Now one can ask Claude Code to offload a task to the codex subagent:
+
+```
+"Use the codex-executor to create a REST API endpoint for user authentication"
+"Refactor this module to use async/await using the codex-executor agent"
+```
 
 The agent automatically delegates when appropriate, gathering context and executing Codex with the right flags.
 
