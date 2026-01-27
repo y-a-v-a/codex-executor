@@ -86,12 +86,12 @@ codex exec --json --output-last-message /tmp/codex-result.json "analyze the code
 
 ## Best Practices
 
-✅ **Use --full-auto for most tasks** - Provides a good balance of automation and safety
-✅ **Save output to files** - Use `--output-last-message` to avoid losing long outputs
-✅ **Provide clear task descriptions** - The more specific, the better Codex performs
-✅ **Include context** - Reference specific files and explain the desired outcome
-✅ **Verify changes** - Always confirm that Codex made the intended modifications
-✅ **Handle errors gracefully** - If Codex fails, analyze why and adjust your approach
+- **Use `--full-auto` for most tasks** - Provides a good balance of automation and safety
+- **Save output to files** - Use `--output-last-message` to avoid losing long outputs
+- **Provide clear task descriptions** - The more specific, the better Codex performs
+- **Include context** - Reference specific files and explain the desired outcome
+- **Verify changes** - Always confirm that Codex made the intended modifications
+- **Handle errors gracefully** - If Codex fails, analyze why and adjust your approach
 
 ## Safety Considerations
 

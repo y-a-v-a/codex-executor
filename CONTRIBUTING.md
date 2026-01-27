@@ -5,15 +5,16 @@ This guide explains how to extend and customize the Codex agent for your needs.
 ## Agent Architecture
 
 The agent consists of:
-- **Agent definition** - `.claude/agents/codex-executor.md` (YAML frontmatter + Markdown prompt)
-- **Validation script** - `scripts/validate-codex-command.sh` (optional safety hook)
-- **Settings** - `.claude/settings.local.json` (permissions and hooks)
+- **Agent definition** - `./codex-executor.md` (YAML frontmatter + Markdown prompt)
+  - Includes tool permissions, model selection, permission mode, and hooks
+- **Validation script** - `./scripts/validate-codex-command.sh` (optional safety hook)
+- **Settings** - `~/.claude/settings.json` (optional global configuration)
 
 ## Customizing the Agent
 
 ### Modifying the Agent Definition
 
-Edit `.claude/agents/codex-executor.md`:
+Edit `./codex-executor.md`:
 
 #### Change Available Tools
 
@@ -107,7 +108,7 @@ You can create multiple agents for different purposes:
 
 ### Example: Codex Analyzer Agent
 
-Create `.claude/agents/codex-analyzer.md`:
+Create `./codex-analyzer.md`:
 
 ```yaml
 ---
@@ -132,7 +133,7 @@ Never modify code, only analyze and report.
 
 ### Example: Codex Test Generator Agent
 
-Create `.claude/agents/codex-tester.md`:
+Create `./codex-tester.md`:
 
 ```yaml
 ---
@@ -157,9 +158,49 @@ Use the project's testing framework (Jest, PyTest, etc).
 
 ## Configuring Hooks
 
+Hooks can be configured directly in the agent's YAML frontmatter. This is the recommended approach as it keeps the configuration with the agent definition.
+
 ### Agent Lifecycle Hooks
 
-Add to `.claude/settings.local.json`:
+Add to the YAML frontmatter in `codex-executor.md`:
+
+```yaml
+---
+name: codex-executor
+hooks:
+  SubagentStart:
+    - type: command
+      command: echo 'Starting Codex executor agent...' >&2
+  SubagentStop:
+    - type: command
+      command: echo 'Codex executor agent finished.' >&2
+---
+```
+
+### Tool Usage Hooks
+
+Add to the YAML frontmatter in `codex-executor.md`:
+
+```yaml
+---
+name: codex-executor
+hooks:
+  PreToolUse:
+    - matcher: Bash
+      hooks:
+        - type: command
+          command: ./scripts/validate-codex-command.sh
+  PostToolUse:
+    - matcher: Write|Edit
+      hooks:
+        - type: command
+          command: ./scripts/format-code.sh
+---
+```
+
+### Alternative: Global Hooks Configuration
+
+If you need hooks to apply across multiple agents, you can still configure them in `.claude/settings.local.json`:
 
 ```json
 {
@@ -174,48 +215,6 @@ Add to `.claude/settings.local.json`:
           }
         ]
       }
-    ],
-    "SubagentStop": [
-      {
-        "matcher": "codex-executor",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./scripts/cleanup-codex-temp.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Tool Usage Hooks
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./scripts/validate-codex-command.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./scripts/format-code.sh"
-          }
-        ]
-      }
     ]
   }
 }
@@ -225,27 +224,27 @@ Add to `.claude/settings.local.json`:
 
 ### For Agent Design
 
-✅ **Keep focused** - One agent, one purpose
-✅ **Clear descriptions** - Help Claude decide when to delegate
-✅ **Appropriate permissions** - Grant only necessary tools
-✅ **Error handling** - Include retry logic in system prompt
-✅ **Documentation** - Explain usage patterns in the prompt
+- **Keep focused** - One agent, one purpose
+- **Clear descriptions** - Help Claude decide when to delegate
+- **Appropriate permissions** - Grant only necessary tools
+- **Error handling** - Include retry logic in system prompt
+- **Documentation** - Explain usage patterns in the prompt
 
 ### For System Prompts
 
-✅ **Be specific** - Detailed instructions produce better results
-✅ **Include examples** - Show concrete command patterns
-✅ **Explain context** - Help agent understand when to use features
-✅ **Provide workflows** - Step-by-step processes
-✅ **Handle errors** - Explicit error handling instructions
+- **Be specific** - Detailed instructions produce better results
+- **Include examples** - Show concrete command patterns
+- **Explain context** - Help agent understand when to use features
+- **Provide workflows** - Step-by-step processes
+- **Handle errors** - Explicit error handling instructions
 
 ### For Validation Scripts
 
-✅ **Fail safe** - Default to blocking on uncertainty
-✅ **Clear messages** - Explain why something was blocked
-✅ **Exit codes** - Use 0 (allow) and 2 (block) correctly
-✅ **Minimal dependencies** - Avoid requiring exotic tools
-✅ **Fast execution** - Keep validation quick
+- **Fail safe** - Default to blocking on uncertainty
+- **Clear messages** - Explain why something was blocked
+- **Exit codes** - Use 0 (allow) and 2 (block) correctly
+- **Minimal dependencies** - Avoid requiring exotic tools
+- **Fast execution** - Keep validation quick
 
 ## Testing Changes
 
@@ -253,7 +252,7 @@ After modifying the agent:
 
 1. **Syntax check** - Ensure YAML is valid
    ```bash
-   python3 -c "import yaml; yaml.safe_load(open('.claude/agents/codex-executor.md').read().split('---')[1])"
+   python3 -c "import yaml; yaml.safe_load(open('./codex-executor.md').read().split('---')[1])"
    ```
 
 2. **Reload agent** - Restart Claude Code or use `/agents` command
@@ -323,7 +322,7 @@ If you create useful modifications:
 1. Document them clearly
 2. Add examples to `example-usage.md`
 3. Update `TESTING.md` with new test cases
-4. Share in `.claude/agents/` for team use
+4. Share in `./` for team use
 5. Consider contributing back to the community
 
 ## Troubleshooting Customizations
@@ -331,7 +330,7 @@ If you create useful modifications:
 ### Agent not loading
 
 - Check YAML syntax in frontmatter
-- Ensure file is in `.claude/agents/` directory
+- Ensure file is in `.` directory and symlinked from `~/.claude/agents`
 - Verify file has `.md` extension
 - Restart Claude Code
 

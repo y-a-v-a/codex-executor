@@ -163,7 +163,7 @@ codex login status
 **Solution:**
 - Explicitly request the agent: "Use the codex-executor agent..."
 - Check agent file syntax
-- Review agent description in `.claude/agents/codex-executor.md`
+- Review agent description in `./codex-executor.md`
 
 ### Issue: Validation hook blocks all commands
 
@@ -195,7 +195,7 @@ Or press `Ctrl+B` during execution.
 
 ### Test with Different Models
 
-Edit `.claude/agents/codex-executor.md` and change:
+Edit `./codex-executor.md` and change:
 ```yaml
 model: haiku  # For faster, simpler tasks
 # OR
@@ -274,13 +274,13 @@ Compare code quality between:
 
 The agent is working correctly if:
 
-✅ Claude Code successfully delegates appropriate tasks to it
-✅ Agent communicates clearly with Codex CLI
-✅ Results are captured and summarized properly
-✅ File changes are made correctly
-✅ Errors are handled gracefully
-✅ Validation hooks work as expected
-✅ Agent reports useful information back to Claude Code
+- Claude Code successfully delegates appropriate tasks to it
+- Agent communicates clearly with Codex CLI
+- Results are captured and summarized properly
+- File changes are made correctly
+- Errors are handled gracefully
+- Validation hooks work as expected
+- Agent reports useful information back to Claude Code
 
 ## Reporting Issues
 

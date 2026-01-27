@@ -54,11 +54,11 @@ When a task is delegated to codex-executor:
 
 ## Agent Benefits
 
-✅ **Specialized expertise** - Focused on Codex CLI interaction
-✅ **Proper safety** - Uses appropriate sandbox settings
-✅ **Clear reporting** - Summarizes results effectively
-✅ **Error handling** - Retries with adjusted parameters if needed
-✅ **Context-aware** - Gathers relevant code before delegating to Codex
+- **Specialized expertise** - Focused on Codex CLI interaction
+- **Proper safety** - Uses appropriate sandbox settings
+- **Clear reporting** - Summarizes results effectively
+- **Error handling** - Retries with adjusted parameters if needed
+- **Context-aware** - Gathers relevant code before delegating to Codex
 
 ## Task Types Suitable for Codex Agent
 

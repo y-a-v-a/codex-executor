@@ -8,9 +8,7 @@ Complete reference for configuring and using the Codex agent.
 
 | File | Purpose |
 |------|---------|
-| `.claude/agents/codex-executor.md` | Main agent definition |
-| `.claude/settings.local.json` | Active project settings |
-| `.claude/settings.example.json` | Example configuration with hooks |
+| `codex-executor.md` | Main agent definition |
 | `scripts/validate-codex-command.sh` | Safety validation hook |
 | `README.md` | Overview and quick start |
 | `example-usage.md` | Usage patterns and examples |
@@ -120,7 +118,7 @@ Edit `.claude/settings.local.json`:
 
 ### Customize Agent Model
 
-Edit `.claude/agents/codex-executor.md`:
+Edit `./codex-executor.md`:
 ```yaml
 ---
 model: haiku  # For speed
@@ -131,7 +129,7 @@ model: opus   # For complexity
 
 ### Limit Agent Permissions
 
-Edit `.claude/agents/codex-executor.md`:
+Edit `./codex-executor.md`:
 ```yaml
 ---
 tools: Bash, Read, Grep, Glob  # Read-only (no Write/Edit)
@@ -141,7 +139,8 @@ permissionMode: dontAsk
 
 ### Add Project-Specific Rules
 
-Edit the system prompt in `.claude/agents/codex-executor.md`:
+Edit the system prompt in `./codex-executor.md`:
+
 ```markdown
 ## Project Rules
 
@@ -185,7 +184,7 @@ claude  # Start Claude Code
 ./scripts/validate-codex-command.sh <<< '{"tool_input":{"command":"codex exec test"}}'
 
 # Check agent syntax
-python3 -c "import yaml; yaml.safe_load(open('.claude/agents/codex-executor.md').read().split('---')[1])"
+python3 -c "import yaml; yaml.safe_load(open('./codex-executor.md').read().split('---')[1])"
 ```
 
 ## Environment Variables
@@ -198,14 +197,14 @@ python3 -c "import yaml; yaml.safe_load(open('.claude/agents/codex-executor.md')
 
 ## Best Practices
 
-✅ Use `--full-auto` for most development tasks
-✅ Save output with `--output-last-message`
-✅ Provide clear, specific task descriptions
-✅ Include context about existing code
-✅ Verify changes after delegation
-✅ Use appropriate sandbox settings
-✅ Enable validation hooks for safety
-✅ Document project-specific rules in agent prompt
+- Use `--full-auto` for most development tasks
+- Save output with `--output-last-message`
+- Provide clear, specific task descriptions
+- Include context about existing code
+- Verify changes after delegation
+- Use appropriate sandbox settings
+- Enable validation hooks for safety
+- Document project-specific rules in agent prompt
 
 ## Resources
 
