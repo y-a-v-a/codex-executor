@@ -6,7 +6,7 @@ This document provides examples of how Claude Code can delegate tasks to the Cod
 
 ## Automatic Delegation
 
-Claude Code will automatically use the codex-executor agent when you request coding tasks that would benefit from Codex's capabilities.
+Claude Code will automatically use the codex-executor agent when you request coding tasks that would benefit from Codex's capabilities. One might need to explicitly state to use the codex-executor agent.
 
 ### Example Interactions
 

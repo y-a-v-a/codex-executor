@@ -4,21 +4,45 @@ A Claude Code agent that delegates coding tasks to OpenAI Codex CLI.
 
 ## Quick Start
 
-1. Install prerequisites: [Claude Code](https://code.claude.com) and [Codex CLI](https://developers.openai.com/codex/cli)
-2. The agent at `.claude/agents/codex-executor.md` is automatically available
-3. Ask Claude Code to perform coding tasks:
+Install prerequisites: [Claude Code](https://code.claude.com) and [Codex CLI](https://developers.openai.com/codex/cli)
+
+```sh
+# clone repository
+git clone git@github.com:y-a-v-a/codex-executor.git
+
+# symlink directory from claude agents
+cd ~/.claude/agents
+ln -s ~/Projects/codex-executor
+```
+
+When you `ls -l` the output should be something like 
+
+`codex-executor -> /Users/vincentb/Projects/codex-executor`
+
+Set permissions correctly in `~/.claude/settings.json` or on project level from the project root in `.claude/settings.local.json`
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Task(codex-executor)"
+    ]
+  }
+}
+```
+
+Now one can ask Claude Code to offload a tast to the subagent codex:
    ```
-   "Create a REST API endpoint for user authentication"
-   "Refactor this module to use async/await"
+   "Use the codex-executor to create a REST API endpoint for user authentication"
+   "Refactor this module to use async/await using the codex-executor agent"
    ```
 
 The agent automatically delegates when appropriate, gathering context and executing Codex with the right flags.
 
 ## Key Files
 
-- `.claude/agents/codex-executor.md` - Agent definition
-- `.claude/settings.example.json` - Example configuration with safety hooks
-- `scripts/validate-codex-command.sh` - Command validation for safety
+- `./codex-executor.md` - Agent definition
+- `./scripts/validate-codex-command.sh` - Command validation for safety
 
 ## Documentation
 
