@@ -1,6 +1,6 @@
-# Claude Code Codex Agent
+# Claude Code Codex Skills
 
-A Claude Code agent that delegates coding tasks to OpenAI Codex CLI.
+Claude Code skills that delegate coding tasks and code reviews to OpenAI Codex CLI.
 
 ## Quick Start
 
@@ -10,44 +10,59 @@ Install prerequisites: [Claude Code](https://code.claude.com) and [Codex CLI](ht
 # clone repository
 git clone git@github.com:y-a-v-a/codex-executor.git
 
-# symlink directory from claude agents
-cd ~/.claude/agents
-ln -s ~/Projects/codex-executor
+# symlink skills into Claude Code (adjust path to where you cloned the repo)
+ln -s /path/to/codex-executor/skills/codex ~/.claude/skills/codex
+ln -s /path/to/codex-executor/skills/codex-review ~/.claude/skills/codex-review
 ```
 
-When you `ls -l` the output should be something like 
-
-`codex-executor -> /Users/vincentb/Projects/codex-executor`
-
-Set permissions correctly in `~/.claude/settings.json` or on project level from the project root in `.claude/settings.local.json`
+Set permissions in `~/.claude/settings.json` or in `.claude/settings.local.json` at the project level:
 
 ```json
 {
   "permissions": {
     "allow": [
-      "Task(codex-executor)"
+      "Skill(codex *)",
+      "Skill(codex-review *)"
     ]
   }
 }
 ```
 
-Now one can ask Claude Code to offload a task to the codex subagent:
+## Usage
+
+### `/codex` — Task execution
+
+Delegate a coding task to Codex:
 
 ```
-"Use the codex-executor to create a REST API endpoint for user authentication"
-"Refactor this module to use async/await using the codex-executor agent"
+/codex create a REST API endpoint for user authentication
+/codex refactor this module to use async/await
+/codex analyze security vulnerabilities in the codebase
 ```
 
-The agent automatically delegates when appropriate, gathering context and executing Codex with the right flags.
+### `/codex-review` — Code review
+
+Run a code review using Codex:
+
+```
+/codex-review --uncommitted
+/codex-review --base main
+/codex-review --commit abc123
+```
 
 ## Key Files
 
-- `./codex-executor.md` - Agent definition
-- `./scripts/validate-codex-command.sh` - Command validation for safety
+| Path | Purpose |
+|------|---------|
+| `skills/codex/SKILL.md` | Codex task execution skill |
+| `skills/codex/scripts/validate-codex-command.sh` | Command validation hook |
+| `skills/codex-review/SKILL.md` | Codex code review skill |
 
 ## Documentation
 
-- **[QUICKREF.md](./QUICKREF.md)** - Complete reference: CLI flags, configuration, hooks, troubleshooting
-- **[example-usage.md](./example-usage.md)** - Usage patterns and workflow examples
-- [Claude Code agent docs](https://code.claude.com/docs/en/sub-agents)
+- **[docs/quickref.md](./docs/quickref.md)** — Complete reference: CLI flags, configuration, hooks, troubleshooting
+- **[docs/examples.md](./docs/examples.md)** — Usage patterns and workflow examples
+- **[docs/contributing.md](./docs/contributing.md)** — Customization and extension guide
+- **[docs/testing.md](./docs/testing.md)** — Testing and verification guide
+- [Claude Code skills docs](https://code.claude.com/docs/en/skills)
 - [Codex CLI reference](https://developers.openai.com/codex/cli/reference)
