@@ -60,9 +60,7 @@ Run a code review using Codex:
 
 ## Documentation
 
-- **[docs/quickref.md](./docs/quickref.md)** — Complete reference: CLI flags, configuration, hooks, troubleshooting
-- **[docs/examples.md](./docs/examples.md)** — Usage patterns and workflow examples
-- **[docs/contributing.md](./docs/contributing.md)** — Customization and extension guide
+- **[docs/reference.md](./docs/reference.md)** — Complete reference: CLI flags, configuration, hooks, troubleshooting
 - **[docs/testing.md](./docs/testing.md)** — Testing and verification guide
 - [Claude Code skills docs](https://code.claude.com/docs/en/skills)
 - [Codex CLI reference](https://developers.openai.com/codex/cli/reference)
