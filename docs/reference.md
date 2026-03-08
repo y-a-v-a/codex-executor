@@ -50,26 +50,6 @@ codex --version
 | `--cd <dir>` | Set working directory |
 | `--search` | Enable web search |
 
-## Skill Frontmatter Fields
-
-```yaml
----
-name: skill-name
-description: When to use this
-argument-hint: [what to pass]
-disable-model-invocation: true   # prevent auto-invocation
-context: fork                    # isolated context (no conversation history)
-agent: Explore                   # read-only agent
-allowed-tools: Bash(codex *), Read
-hooks:
-  PreToolUse:
-    - matcher: Bash
-      hooks:
-        - type: command
-          command: bash scripts/validate-codex-command.sh
----
-```
-
 ## Environment Variables
 
 | Variable | Purpose |
