@@ -1,6 +1,6 @@
 # Testing Codex Skills
 
-Prerequisites: install and authenticate Codex CLI — see [quickref.md](./quickref.md#prerequisites).
+Prerequisites: install and authenticate Codex CLI — see [reference.md](./reference.md#prerequisites).
 
 ## `/codex`
 
@@ -37,4 +37,4 @@ Set `CODEX_ALLOW_DANGER_MODE=1` or `CODEX_ALLOW_BYPASS=1` to permit dangerous op
 
 ## Troubleshooting
 
-See [quickref.md](./quickref.md#troubleshooting).
+See [reference.md](./reference.md#troubleshooting).
