@@ -162,22 +162,8 @@ python3 -c "import yaml; yaml.safe_load(open('skills/codex/SKILL.md').read().spl
 | `CODEX_ALLOW_BYPASS` | Allow bypassing all approvals and sandboxing |
 | `CI` | Detected for CI/CD mode behavior |
 
-## Best Practices
-
-- Use `--full-auto` for most development tasks
-- Save output with `--output-last-message`
-- Provide clear, specific task descriptions
-- Include context about existing code
-- Verify changes after delegation
-- Use appropriate sandbox settings
-- Enable validation hooks for safety
-- Document project-specific rules in skill prompt
-
 ## Resources
 
-- **Skills Documentation**: https://code.claude.com/docs/en/skills
-- **Codex CLI Reference**: https://developers.openai.com/codex/cli/reference
-- **Project README**: [../README.md](../README.md)
-- **Usage Examples**: [examples.md](./examples.md)
-- **Testing Guide**: [testing.md](./testing.md)
-- **Customization Guide**: [contributing.md](./contributing.md)
+- [Skills Documentation](https://code.claude.com/docs/en/skills)
+- [Codex CLI Reference](https://developers.openai.com/codex/cli/reference)
+- [examples.md](./examples.md) · [testing.md](./testing.md) · [contributing.md](./contributing.md)
