@@ -1,6 +1,9 @@
 # Claude Code Codex Skills
 
-Claude Code skills that delegate coding tasks and code reviews to OpenAI Codex CLI.
+Claude Code skills that collaborate with OpenAI Codex CLI: delegate coding tasks,
+run cross-model code reviews, and reach agreement on a plan through a turn-based
+discussion. Claude proposes and acts; Codex — a different model — challenges and
+reviews, so work gets a second opinion instead of self-review.
 
 ## Quick Start
 
@@ -13,6 +16,7 @@ git clone git@github.com:y-a-v-a/codex-executor.git
 # symlink skills into Claude Code (adjust path to where you cloned the repo)
 ln -s /path/to/codex-executor/skills/codex ~/.claude/skills/codex
 ln -s /path/to/codex-executor/skills/codex-review ~/.claude/skills/codex-review
+ln -s /path/to/codex-executor/skills/codex-discuss ~/.claude/skills/codex-discuss
 ```
 
 Set permissions in `~/.claude/settings.json` or in `.claude/settings.local.json` at the project level:
@@ -22,7 +26,8 @@ Set permissions in `~/.claude/settings.json` or in `.claude/settings.local.json`
   "permissions": {
     "allow": [
       "Skill(codex *)",
-      "Skill(codex-review *)"
+      "Skill(codex-review *)",
+      "Skill(codex-discuss *)"
     ]
   }
 }
@@ -40,15 +45,30 @@ Delegate a coding task to Codex:
 /codex analyze security vulnerabilities in the codebase
 ```
 
-### `/codex-review` — Code review
+### `/codex-review` — Cross-model code review
 
-Run a code review using Codex:
+A different model reviews the diff; findings are triaged by severity and
+contested findings are reconciled with Codex before you act:
 
 ```
 /codex-review --uncommitted
-/codex-review --base main
-/codex-review --commit abc123
+/codex-review --base main --focus security
+/codex-review --commit abc123 --intent "make the parser handle empty input"
 ```
+
+### `/codex-discuss` — Agent discussion
+
+Work through a design or plan with Codex in a shared markdown file. You propose,
+Codex challenges, and the loop runs autonomously until you converge (or reach a
+recorded impasse) — before any code is written:
+
+```
+/codex-discuss should we cache at the request layer or the data layer?
+/codex-discuss design the migration from callbacks to async
+```
+
+The discussion is written to `codex-discussions/<slug>.md` in the current repo so
+the reasoning trail can be committed or ignored as you prefer.
 
 ## Key Files
 
@@ -56,7 +76,9 @@ Run a code review using Codex:
 |------|---------|
 | `skills/codex/SKILL.md` | Codex task execution skill |
 | `skills/codex/scripts/validate-codex-command.sh` | Command validation hook |
-| `skills/codex-review/SKILL.md` | Codex code review skill |
+| `skills/codex-review/SKILL.md` | Cross-model code review skill |
+| `skills/codex-discuss/SKILL.md` | Agent discussion skill |
+| `skills/codex-discuss/scripts/validate-codex-command.sh` | Command validation hook |
 
 ## Documentation
 
