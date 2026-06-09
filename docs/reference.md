@@ -14,13 +14,31 @@
 /codex fix the race condition in the connection pool
 ```
 
-### `/codex-review` — Code Review
+### `/codex-review` — Cross-Model Code Review
 
 ```
-/codex-review --uncommitted          # Review working tree changes
-/codex-review --base main            # Review branch vs base branch
-/codex-review --commit abc123        # Review a specific commit
+/codex-review --uncommitted                          # Review working tree changes
+/codex-review --base main                            # Review branch vs base branch
+/codex-review --commit abc123                        # Review a specific commit
+/codex-review --base main --focus security           # Directed review
+/codex-review --uncommitted --intent "<goal>"        # Review against stated intent
 ```
+
+Findings are triaged (Accept / Reject / Defer / Discuss); contested findings get
+one reconciliation round with Codex (HOLD / WITHDRAW). A report is written to
+`codex-reviews/<slug>.md` when there are findings worth tracking.
+
+### `/codex-discuss` — Agent Discussion
+
+```
+/codex-discuss <topic or question to work through>
+```
+
+Turn-based discussion in `codex-discussions/<slug>.md`. You propose, Codex
+challenges; the loop runs autonomously to `CONVERGED` or `IMPASSE` (default cap
+5 round-trips) and an `## Outcome` section records the agreed plan or the open
+disagreements. Codex runs `--sandbox read-only` and never edits files — you are
+the sole writer of the discussion file.
 
 ## Prerequisites
 
@@ -36,7 +54,9 @@ codex --version
 |------|---------|
 | `skills/codex/SKILL.md` | Codex task execution skill |
 | `skills/codex/scripts/validate-codex-command.sh` | Safety validation hook |
-| `skills/codex-review/SKILL.md` | Code review skill |
+| `skills/codex-review/SKILL.md` | Cross-model code review skill |
+| `skills/codex-discuss/SKILL.md` | Agent discussion skill |
+| `skills/codex-discuss/scripts/validate-codex-command.sh` | Safety validation hook |
 
 ## Codex CLI Flags
 

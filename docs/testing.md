@@ -19,9 +19,26 @@ git diff
 
 ```
 /codex-review --uncommitted
-/codex-review --base main
-/codex-review --commit abc123
+/codex-review --base main --focus security
+/codex-review --commit abc123 --intent "handle empty input"
 ```
+
+Expect: findings triaged by severity, contested findings reconciled with Codex,
+and a `codex-reviews/<slug>.md` report when findings warrant tracking.
+
+## `/codex-discuss`
+
+```
+/codex-discuss should config live in env vars or a config file?
+```
+
+Check the discussion file:
+```bash
+cat codex-discussions/*.md
+```
+
+Expect: alternating `Turn N — Claude` / `Turn N — Codex` sections, each ending in
+a `Signal:` line, and a final `## Outcome` with status `CONVERGED` or `IMPASSE`.
 
 ## Validation Hook
 
