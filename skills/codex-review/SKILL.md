@@ -2,7 +2,14 @@
 name: codex-review
 description: Cross-model code review with OpenAI Codex. A different model reviews the diff, findings are triaged by severity, and contested findings are reconciled with Codex before you act — so Claude-authored changes get reviewed without self-review bias.
 argument-hint: [--uncommitted | --base <branch> | --commit <sha>] [--focus security|performance|correctness|tests] [--intent "<what the change should do>"]
+disable-model-invocation: true
 allowed-tools: Bash(codex *), Bash(git diff:*), Bash(git log:*), Read, Write, Edit, Glob, Grep
+hooks:
+  PreToolUse:
+    - matcher: Bash
+      hooks:
+        - type: command
+          command: bash scripts/validate-codex-command.sh
 ---
 
 You run a code review with OpenAI Codex and then **act as the author's critical
@@ -34,16 +41,32 @@ that Codex — a *different* model — reviews the change. So this is most usefu
    ```
 
    For a `--focus` pass, or to get structured output, run a directed review over
-   the diff instead:
+   the diff instead. `codex exec` consumes **one** prompt — a second positional
+   arg (`"$(cat /tmp/review.diff)"`) is not reliably read, so the model can end
+   up reviewing with no diff in front of it. Build a single brief that embeds the
+   intent *and* the diff, then pass that one file:
 
    ```bash
    git diff <scope> > /tmp/review.diff
+   {
+     echo "## Intent"
+     echo "<intent — what this change should do>"
+     echo
+     echo "## Focus"
+     echo "<focus: security|performance|correctness|tests>"
+     echo
+     echo "## Instructions"
+     echo "For each finding give: severity (Blocker|Major|Minor|Nit), category"
+     echo "(correctness|security|performance|maintainability|tests), file:line, the"
+     echo "problem, and a concrete fix. Be specific; skip praise."
+     echo
+     echo "## Diff"
+     echo '```diff'
+     cat /tmp/review.diff
+     echo '```'
+   } > /tmp/codex-review-brief.md
    codex exec --sandbox read-only --output-last-message /tmp/codex-review.md \
-     "Review this diff with a focus on <focus>. The change is intended to: <intent>. \
-      For each finding give: severity (Blocker|Major|Minor|Nit), category \
-      (correctness|security|performance|maintainability|tests), file:line, the \
-      problem, and a concrete fix. Be specific; skip praise. Diff:" \
-     "$(cat /tmp/review.diff)"
+     "$(cat /tmp/codex-review-brief.md)"
    ```
 
 3. **Triage every finding.** Don't accept findings on the reviewer's authority —

@@ -57,6 +57,10 @@ Template:
 ## Constraints
 - <hard requirements, non-negotiables, context>
 
+## Repo context
+- <relevant files you found and what each implies>
+- <conventions / invariants the challenger must not break>
+
 ---
 
 ## Turn 1 — Claude (proposer)
@@ -84,6 +88,15 @@ Run to a conclusion without pausing for the user. Each round:
       On the first round you MUST raise at least one substantive objection — do not \
       agree yet. Do not modify any files."
    ```
+
+   **Round 1 only — ground the challenger in the codebase.** Codex runs
+   read-only and starts cold; a design critique that ignores the code it has to
+   live in is weak. Before the first turn, write a short `## Repo context`
+   section into the discussion file (or a `/tmp/repo-context.md` you reference):
+   the relevant files you found, the conventions and constraints they imply, and
+   anything Codex must not break. The challenger reads it from the discussion
+   file along with the proposal, so its objections are anchored to the actual
+   system, not the design in the abstract.
 
 2. **Your turn.** Read Codex's turn. Address each objection honestly — concede
    what's right, defend what's wrong with reasons, revise the proposal. Append a
