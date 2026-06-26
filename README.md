@@ -1,9 +1,27 @@
 # Claude Code Codex Skills
 
-Claude Code skills that collaborate with OpenAI Codex CLI: delegate coding tasks,
-run cross-model code reviews, and reach agreement on a plan through a turn-based
-discussion. Claude proposes and acts; Codex — a different model — challenges and
-reviews, so work gets a second opinion instead of self-review.
+Claude Code skills that pair Claude with the OpenAI Codex CLI: delegate coding
+tasks, run cross-model code reviews, and reach agreement on a plan through a
+turn-based discussion — Claude proposes and acts, Codex (a different model)
+challenges and reviews.
+
+## Why a second model
+
+A model reviewing its own work grades on a curve — it's biased toward approving
+what it just produced. These skills sidestep that by putting a *different* model
+in the critical seat: Claude proposes and implements; Codex challenges, reviews,
+and reconciles. The disagreement is the point — a second model that argues the
+other side is worth far more than one that nods along.
+
+Three modes bring that second opinion in at each stage of the work:
+
+- **Plan it** (`/codex-discuss`) — pressure-test a design before any code exists.
+- **Build it** (`/codex`) — hand a well-briefed task to Codex, then verify the result.
+- **Check it** (`/codex-review`) — get an independent review of a diff Claude wrote.
+
+Because `codex exec` is stateless, every handoff is only as good as the brief it
+carries — so each skill gathers real context (files, diffs, constraints) and puts
+it in front of Codex instead of describing the task in a single line.
 
 ## Quick Start
 
@@ -69,16 +87,6 @@ recorded impasse) — before any code is written:
 
 The discussion is written to `codex-discussions/<slug>.md` in the current repo so
 the reasoning trail can be committed or ignored as you prefer.
-
-## Key Files
-
-| Path | Purpose |
-|------|---------|
-| `skills/codex/SKILL.md` | Codex task execution skill |
-| `skills/codex/scripts/validate-codex-command.sh` | Command validation hook |
-| `skills/codex-review/SKILL.md` | Cross-model code review skill |
-| `skills/codex-discuss/SKILL.md` | Agent discussion skill |
-| `skills/codex-discuss/scripts/validate-codex-command.sh` | Command validation hook |
 
 ## Documentation
 
