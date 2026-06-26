@@ -71,6 +71,13 @@ Template:
 - <relevant files you found and what each implies>
 - <conventions / invariants the challenger must not break>
 
+## Live state
+<!-- The canonical current surface — refresh it every round so a stateless Codex
+     reads the latest proposal and open objections without mining the transcript
+     below. The `## Turn N` sections are the audit log, not the source of truth. -->
+- **Current proposal:** <one-paragraph latest proposal>
+- **Accepted constraints / risks:** <what both sides have accepted so far>
+
 ## Objections (ledger)
 <!-- Stable IDs, appended as Codex raises them. Codex's closing turn must address
      every entry by ID. Format:
@@ -97,8 +104,9 @@ Run to a conclusion without pausing for the user. Each round:
    codex exec --sandbox read-only --skip-git-repo-check --cd "$(pwd)" \
      --output-last-message /tmp/codex-turn.md \
      "You are the challenger in a design discussion. Read the discussion file at \
-      codex-discussions/<slug>.md, AND open the actual repo files it lists under \
-      '## Repo context' — argue from the code itself, not from the proposer's \
+      codex-discussions/<slug>.md — start from its '## Live state' and any OPEN \
+      '## Objections' — AND open the actual repo files it lists under \
+      '## Repo context'; argue from the code itself, not from the proposer's \
       summary of it. Respond with ONLY your next turn as markdown: attack the \
       latest proposal — surface risks, edge cases, hidden costs, and a concrete \
       alternative where you have one. End with a line: \
@@ -129,7 +137,10 @@ Run to a conclusion without pausing for the user. Each round:
    what's right, defend what's wrong with reasons, revise the proposal. Update
    the **ledger**: give each new objection a stable ID, and set status + closure
    evidence on the ones you've answered. Append a `## Turn N+1 — Claude
-   (proposer)` heading ending in a `**Signal:**` line.
+   (proposer)` heading ending in a `**Signal:**` line. Then **refresh the
+   `## Live state` block** (current proposal + accepted constraints + open O#s)
+   so the next, stateless Codex turn reads the canonical surface rather than
+   re-deriving it from — and relitigating — the whole transcript.
 
 3. **Check convergence** (see below). If not converged and under the round cap,
    re-run Codex.
