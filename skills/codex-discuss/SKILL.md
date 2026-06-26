@@ -28,6 +28,16 @@ critical one. This skill exploits that: **you propose, Codex challenges.** Codex
 is instructed to find the weakest part of each proposal, not to validate it.
 Agreement only counts once the objections have actually been answered.
 
+## When to use this (and when not to)
+
+Turn-based discussion is **not the default** — it costs several minutes per
+Codex turn plus the upkeep of a shared artifact. For most design questions a
+one-shot critique (a single `codex exec` over a brief, or `/codex-review`)
+delivers most of the value at a fraction of the cost. Reach for `codex-discuss`
+only when the decision has **durable architecture impact, irreversible
+migration cost, or a live Blocker/Major disagreement** a single round can't
+settle. Otherwise prefer the one-shot and stop there.
+
 ## The shared file
 
 One markdown file is the entire conversation. **You are the only writer** —
@@ -61,6 +71,19 @@ Template:
 - <relevant files you found and what each implies>
 - <conventions / invariants the challenger must not break>
 
+## Live state
+<!-- The canonical current surface — refresh it every round so a stateless Codex
+     reads the latest proposal and open objections without mining the transcript
+     below. The `## Turn N` sections are the audit log, not the source of truth. -->
+- **Current proposal:** <one-paragraph latest proposal>
+- **Accepted constraints / risks:** <what both sides have accepted so far>
+
+## Objections (ledger)
+<!-- Stable IDs, appended as Codex raises them. Codex's closing turn must address
+     every entry by ID. Format:
+     - O1: <claim> — OPEN | ANSWERED | ACCEPTED_RISK | WONT_FIX — closure: <turn/file/check> -->
+- <none yet>
+
 ---
 
 ## Turn 1 — Claude (proposer)
@@ -78,36 +101,61 @@ Run to a conclusion without pausing for the user. Each round:
    `## Turn N — Codex (challenger)` heading:
 
    ```bash
-   codex exec --sandbox read-only \
+   codex exec --sandbox read-only --skip-git-repo-check --cd "$(pwd)" \
      --output-last-message /tmp/codex-turn.md \
      "You are the challenger in a design discussion. Read the discussion file at \
-      codex-discussions/<slug>.md. Respond with ONLY your next turn as markdown: \
-      attack the latest proposal — surface risks, edge cases, hidden costs, and a \
-      concrete alternative where you have one. End with a line: \
+      codex-discussions/<slug>.md — start from its '## Live state' and any OPEN \
+      '## Objections' — AND open the actual repo files it lists under \
+      '## Repo context'; argue from the code itself, not from the proposer's \
+      summary of it. Respond with ONLY your next turn as markdown: attack the \
+      latest proposal — surface risks, edge cases, hidden costs, and a concrete \
+      alternative where you have one. End with a line: \
       'Signal: AGREE | AGREE_WITH_CAVEATS | DISAGREE | NEEDS_INFO'. \
       On the first round you MUST raise at least one substantive objection — do not \
       agree yet. Do not modify any files."
    ```
 
-   **Round 1 only — ground the challenger in the codebase.** Codex runs
-   read-only and starts cold; a design critique that ignores the code it has to
-   live in is weak. Before the first turn, write a short `## Repo context`
-   section into the discussion file (or a `/tmp/repo-context.md` you reference):
-   the relevant files you found, the conventions and constraints they imply, and
-   anything Codex must not break. The challenger reads it from the discussion
-   file along with the proposal, so its objections are anchored to the actual
-   system, not the design in the abstract.
+   `--cd "$(pwd)"` runs Codex in the repo so it can read those files directly;
+   `--skip-git-repo-check` avoids the trusted-directory refusal.
+
+   **Round 1 only — point the challenger at the code; don't summarize it for
+   it.** Codex runs read-only and starts cold. Write the `## Repo context`
+   section as an **index of files to read** — each path plus one line on why it
+   matters and any invariant it must not break. This list is a *pointer*, **not
+   the evidence**: the prompt above `--cd`s Codex into the repo and tells it to
+   open those files itself, so its objections are anchored to the actual code —
+   including the negative space (an omitted invariant, a stale command, a
+   sibling-skill mismatch) that a prose digest silently hides. Never let the
+   digest stand in for the read.
+
+   **Once the ledger has entries,** append to the prompt: `For each OPEN
+   objection in the ledger, reply ANSWERED / ACCEPTED_RISK / WONT_FIX with one
+   line of closure evidence, or keep it OPEN and say what would close it.` This
+   is what makes convergence checkable instead of a prose vibe.
 
 2. **Your turn.** Read Codex's turn. Address each objection honestly — concede
-   what's right, defend what's wrong with reasons, revise the proposal. Append a
-   `## Turn N+1 — Claude (proposer)` heading ending in a `**Signal:**` line.
+   what's right, defend what's wrong with reasons, revise the proposal. Update
+   the **ledger**: give each new objection a stable ID, and set status + closure
+   evidence on the ones you've answered. Append a `## Turn N+1 — Claude
+   (proposer)` heading ending in a `**Signal:**` line. Then **refresh the
+   `## Live state` block** (current proposal + accepted constraints + open O#s)
+   so the next, stateless Codex turn reads the canonical surface rather than
+   re-deriving it from — and relitigating — the whole transcript.
 
 3. **Check convergence** (see below). If not converged and under the round cap,
    re-run Codex.
 
 ### Convergence
-- **CONVERGED** when the two most recent turns (one from each side) both signal
-  `AGREE` or `AGREE_WITH_CAVEATS` *and* no objection in the thread is still open.
+- **Maintain the ledger every round.** Each new objection gets a stable ID
+  (O1, O2, …); when addressed, set its status (ANSWERED | ACCEPTED_RISK |
+  WONT_FIX) with one line of closure evidence — a turn, a file, or a passing
+  check. An `AGREED_FOLLOWUP` (design settled, only implementation left) counts
+  as closed *for the plan* when both sides name its acceptance test.
+- **CONVERGED** only when the two most recent turns both signal `AGREE` or
+  `AGREE_WITH_CAVEATS` **and** Codex's final turn has addressed every ledger
+  entry by ID with no `OPEN` left. Convergence rests on the ledger, never on a
+  prose vibe — and the proposer doesn't declare it alone: Codex must sign off on
+  each closure.
 - **IMPASSE** when the round cap is hit (default **5** round-trips) without
   convergence, or the same disagreement repeats two rounds running.
 

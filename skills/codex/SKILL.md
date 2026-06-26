@@ -58,14 +58,14 @@ positional argument (`codex exec` consumes one prompt):
 
 ```bash
 # Write the brief to a file, then hand it to Codex as the whole prompt.
-codex exec --full-auto --output-last-message /tmp/codex-result.txt "$(cat /tmp/codex-brief.md)"
+codex exec --sandbox workspace-write --output-last-message /tmp/codex-result.txt "$(cat /tmp/codex-brief.md)"
 ```
 
 ### Recommended Flags
 
 | Flag | Purpose |
 |------|---------|
-| `--full-auto` | Low-friction mode with workspace-write permissions (recommended) |
+| `--sandbox workspace-write` | Low-friction mode: workspace-write permissions (recommended default) |
 | `--output-last-message <file>` | Save final message for retrieval |
 | `--json` | Structured JSON output |
 | `--model <model>` | Override model |
@@ -75,7 +75,7 @@ codex exec --full-auto --output-last-message /tmp/codex-result.txt "$(cat /tmp/c
 
 ## Best Practices
 
-- Use `--full-auto` for most tasks
+- Use `--sandbox workspace-write` for most tasks
 - Always pass `--output-last-message /tmp/codex-result.txt` so the result is captured and verifiable
 - Put gathered context *in the brief* — file paths and excerpts in the prompt beat a vague task description every time
 - Don't trust Codex's summary on its face — verify file changes with `git diff` or by reading the modified files before reporting

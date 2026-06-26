@@ -1,7 +1,7 @@
 ---
 name: codex-validate
 description: Validate the codex, codex-review, and codex-discuss skills end-to-end in a session where the Codex CLI is available — preflight, hook unit tests, and per-skill smoke tests that prove context actually reaches Codex — then self-improve by recording each run and tightening checks when something breaks. Use when codex is installed and you want to confirm the skills still work.
-argument-hint: [all | codex | codex-review | codex-discuss | hooks] [--fix]
+argument-hint: [all | codex | codex-review | codex-discuss | hooks | drift] [--fix]
 disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 hooks:
@@ -22,8 +22,8 @@ what you put in the prompt actually reached Codex, not just that a command exite
 
 `$ARGUMENTS`
 
-- No target, or `all` → run preflight, hooks, and all three skill smoke tests.
-- `codex` | `codex-review` | `codex-discuss` | `hooks` → run just that suite.
+- No target, or `all` → run preflight, hooks, drift, and all three skill smoke tests.
+- `codex` | `codex-review` | `codex-discuss` | `hooks` | `drift` → run just that suite.
 - `--fix` → when a check fails, apply the fix to the offending skill (not only
   this validator) instead of only reporting it. Without `--fix`, propose the fix
   and ask before editing a sibling skill.
@@ -40,11 +40,21 @@ command -v jq                          # the validation hook needs jq
 ```
 
 If `codex` is missing, **stop** and tell the user — there is nothing to validate.
-Do the rest of the work in a throwaway directory so the repo stays clean:
+Do the rest of the work in a throwaway directory so the repo stays clean. Make
+it a git repo so `--cd "$SANDBOX"` is a real working tree:
 
 ```bash
-SANDBOX="$(mktemp -d)"; echo "$SANDBOX"
+SANDBOX="$(mktemp -d)"
+( cd "$SANDBOX" && git init -q && git config user.email v@v && git config user.name v )
+echo "$SANDBOX"
 ```
+
+**Codex CLI gotchas (keep the flags below — don't "simplify" them away):**
+- The sandbox isn't a trusted dir, so every `codex exec` needs
+  `--skip-git-repo-check` and `--cd "$SANDBOX"`, or it exits with "Not inside a
+  trusted directory" and writes nothing — a fake context-drop. `--cd` also keeps
+  Codex from ingesting the whole invoking repo.
+- `codex exec` can take several minutes — give shell calls a 10+ min timeout.
 
 ## 1. Hooks suite — the safety gate must hold
 
@@ -64,6 +74,26 @@ is *not* blocked by the script's own rules (in a live session with codex on PATH
 and authenticated, the allow case exits 0). **Fail:** any script lets the danger
 flag through, or the four scripts diverge — they must stay identical.
 
+## 1b. Drift suite — copied guidance must not go stale
+
+Identical hook md5 (section 1) proves one unsafe command is blocked; it says
+nothing about whether the *instructions users copy* have drifted (e.g. a flag a
+newer Codex CLI deprecated). Scan the user-facing guidance surfaces:
+
+```bash
+bash .claude/skills/codex-validate/scripts/check-cli-drift.sh; echo "exit=$?"
+```
+
+**Pass:** exit 0 — no forbidden pattern in any guidance file. **Fail:** exit 1
+with the offending `file:line` → a skill/doc still teaches a deprecated flag.
+With `--fix`, replace it (e.g. `--full-auto` → `--sandbox workspace-write`) and
+re-run to green; otherwise report the drift.
+
+When a Codex release deprecates or renames a flag, add it to the `FORBIDDEN`
+list in `scripts/check-cli-drift.sh` — that list is the live record of what
+"current" means. The validator's own SKILL.md and `scripts/` are intentionally
+not scanned: they name deprecated flags in order to test for them.
+
 ## 2. `codex` smoke test — does the brief reach Codex?
 
 The point is to prove the gathered context drives the output, not just that a
@@ -80,7 +110,7 @@ A working CSV parser exists in parser.py.
 ## Task
 Create parser.py with that one function; parse a comma-separated line into a list.
 EOF
-codex exec --full-auto --cd "$SANDBOX" --output-last-message "$SANDBOX/out.txt" "$(cat "$SANDBOX/brief.md")"
+codex exec --sandbox workspace-write --skip-git-repo-check --cd "$SANDBOX" --output-last-message "$SANDBOX/out.txt" "$(cat "$SANDBOX/brief.md")"
 grep -q "$SENT" "$SANDBOX/parser.py" && echo "PASS: brief reached Codex" || echo "FAIL: sentinel missing — context was dropped"
 ```
 
@@ -106,7 +136,7 @@ For each finding give severity, category, file:line, problem, and a fix.
 $(cat "$SANDBOX/review.diff")
 \`\`\`
 EOF
-codex exec --sandbox read-only --output-last-message "$SANDBOX/rout.md" "$(cat "$SANDBOX/rbrief.md")"
+codex exec --sandbox read-only --skip-git-repo-check --cd "$SANDBOX" --output-last-message "$SANDBOX/rout.md" "$(cat "$SANDBOX/rbrief.md")"
 grep -qiE 'api_key|secret|hardcoded' "$SANDBOX/rout.md" && echo "PASS: diff reached reviewer" || echo "FAIL: hardcoded secret not flagged — diff was dropped"
 ```
 
@@ -120,7 +150,7 @@ Run a short, capped discussion on a trivial topic and check the *shape* of the
 artifact rather than the conclusion:
 
 ```bash
-codex exec --sandbox read-only --output-last-message "$SANDBOX/turn.md" \
+codex exec --sandbox read-only --skip-git-repo-check --cd "$SANDBOX" --output-last-message "$SANDBOX/turn.md" \
   "You are the challenger in a design discussion. Read nothing; the proposal is: \
    'store config in a single JSON file'. Raise one substantive objection and end \
    with a line: 'Signal: AGREE | AGREE_WITH_CAVEATS | DISAGREE | NEEDS_INFO'."
@@ -181,6 +211,36 @@ as a log entry here describing what broke and what you changed.
 - Check added/changed: <new or tightened check here, or "none">
 -->
 
-### (seed) — no runs yet
-- This log is filled in by the skill on first execution. Replace this entry with
-  the first real run.
+### 2026-06-26 — target: drift  result: PASS (closes codex-discuss objection O5)
+- Suites: drift PASS.
+- What & why: a `codex-discuss` run on the skill suite agreed (O5) that md5-identical
+  hooks prove safety but not that copied *guidance* stays current. Added
+  `scripts/check-cli-drift.sh` + the §1b drift suite to catch that.
+- Acceptance test met: check FAILED on the stale `--full-auto` in
+  skills/codex/SKILL.md (×3) and docs/reference.md (×1), then PASSED after
+  replacing them with `--sandbox workspace-write`.
+- Fix applied: skills/codex/SKILL.md, docs/reference.md (user-approved fix-forward);
+  new drift script + §1b in this skill. The validator's own SKILL.md/scripts are
+  excluded from the scan (they name deprecated flags to test for them).
+- Check added: §1b drift suite. Extend its `FORBIDDEN` list on each CLI deprecation.
+
+### 2026-06-25 — target: all  result: PASS (after fixing this validator)
+- Suites: hooks PASS, codex PASS, codex-review PASS, codex-discuss PASS.
+- Failure & root cause: codex smoke test (§2) failed first — **not** a skill
+  regression. codex 0.141.0 deprecated `--full-auto` and now refuses to run
+  outside a trusted dir, so with `--cd "$SANDBOX"` (a fresh mktemp) and no
+  `--skip-git-repo-check` Codex exited with "Not inside a trusted directory" and
+  wrote no file → looked like a context-drop. Re-running with a git-init'd
+  sandbox + `--sandbox workspace-write --skip-git-repo-check` confirmed the
+  sentinel reached Codex. Also caught the review smoke test (§3) hanging ~7 min
+  because it ran without `--cd`, ingesting the whole invoking repo.
+- Fix applied: this skill only — §0 git-inits the sandbox + documents the CLI
+  surface; §2 uses `--sandbox workspace-write --skip-git-repo-check`; §3/§4 add
+  `--cd "$SANDBOX" --skip-git-repo-check`. No sibling skill edited (`--fix` not
+  passed).
+- Check added/changed: added generic Codex CLI gotchas (trusted-dir +
+  `--cd`, long timeouts) so these env failures aren't misread as context drops.
+  Scoped §3/§4 to the sandbox.
+- Open item: RESOLVED 2026-06-26 (see entry above) — `--full-auto` replaced with
+  `--sandbox workspace-write` in skills/codex/SKILL.md + docs/reference.md, now
+  guarded by the §1b drift suite.
