@@ -61,6 +61,12 @@ Template:
 - <relevant files you found and what each implies>
 - <conventions / invariants the challenger must not break>
 
+## Objections (ledger)
+<!-- Stable IDs, appended as Codex raises them. Codex's closing turn must address
+     every entry by ID. Format:
+     - O1: <claim> — OPEN | ANSWERED | ACCEPTED_RISK | WONT_FIX — closure: <turn/file/check> -->
+- <none yet>
+
 ---
 
 ## Turn 1 — Claude (proposer)
@@ -104,16 +110,31 @@ Run to a conclusion without pausing for the user. Each round:
    sibling-skill mismatch) that a prose digest silently hides. Never let the
    digest stand in for the read.
 
+   **Once the ledger has entries,** append to the prompt: `For each OPEN
+   objection in the ledger, reply ANSWERED / ACCEPTED_RISK / WONT_FIX with one
+   line of closure evidence, or keep it OPEN and say what would close it.` This
+   is what makes convergence checkable instead of a prose vibe.
+
 2. **Your turn.** Read Codex's turn. Address each objection honestly — concede
-   what's right, defend what's wrong with reasons, revise the proposal. Append a
-   `## Turn N+1 — Claude (proposer)` heading ending in a `**Signal:**` line.
+   what's right, defend what's wrong with reasons, revise the proposal. Update
+   the **ledger**: give each new objection a stable ID, and set status + closure
+   evidence on the ones you've answered. Append a `## Turn N+1 — Claude
+   (proposer)` heading ending in a `**Signal:**` line.
 
 3. **Check convergence** (see below). If not converged and under the round cap,
    re-run Codex.
 
 ### Convergence
-- **CONVERGED** when the two most recent turns (one from each side) both signal
-  `AGREE` or `AGREE_WITH_CAVEATS` *and* no objection in the thread is still open.
+- **Maintain the ledger every round.** Each new objection gets a stable ID
+  (O1, O2, …); when addressed, set its status (ANSWERED | ACCEPTED_RISK |
+  WONT_FIX) with one line of closure evidence — a turn, a file, or a passing
+  check. An `AGREED_FOLLOWUP` (design settled, only implementation left) counts
+  as closed *for the plan* when both sides name its acceptance test.
+- **CONVERGED** only when the two most recent turns both signal `AGREE` or
+  `AGREE_WITH_CAVEATS` **and** Codex's final turn has addressed every ledger
+  entry by ID with no `OPEN` left. Convergence rests on the ledger, never on a
+  prose vibe — and the proposer doesn't declare it alone: Codex must sign off on
+  each closure.
 - **IMPASSE** when the round cap is hit (default **5** round-trips) without
   convergence, or the same disagreement repeats two rounds running.
 
