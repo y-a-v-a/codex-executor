@@ -28,6 +28,16 @@ critical one. This skill exploits that: **you propose, Codex challenges.** Codex
 is instructed to find the weakest part of each proposal, not to validate it.
 Agreement only counts once the objections have actually been answered.
 
+## When to use this (and when not to)
+
+Turn-based discussion is **not the default** — it costs several minutes per
+Codex turn plus the upkeep of a shared artifact. For most design questions a
+one-shot critique (a single `codex exec` over a brief, or `/codex-review`)
+delivers most of the value at a fraction of the cost. Reach for `codex-discuss`
+only when the decision has **durable architecture impact, irreversible
+migration cost, or a live Blocker/Major disagreement** a single round can't
+settle. Otherwise prefer the one-shot and stop there.
+
 ## The shared file
 
 One markdown file is the entire conversation. **You are the only writer** —
