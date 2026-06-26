@@ -78,25 +78,31 @@ Run to a conclusion without pausing for the user. Each round:
    `## Turn N — Codex (challenger)` heading:
 
    ```bash
-   codex exec --sandbox read-only \
+   codex exec --sandbox read-only --skip-git-repo-check --cd "$(pwd)" \
      --output-last-message /tmp/codex-turn.md \
      "You are the challenger in a design discussion. Read the discussion file at \
-      codex-discussions/<slug>.md. Respond with ONLY your next turn as markdown: \
-      attack the latest proposal — surface risks, edge cases, hidden costs, and a \
-      concrete alternative where you have one. End with a line: \
+      codex-discussions/<slug>.md, AND open the actual repo files it lists under \
+      '## Repo context' — argue from the code itself, not from the proposer's \
+      summary of it. Respond with ONLY your next turn as markdown: attack the \
+      latest proposal — surface risks, edge cases, hidden costs, and a concrete \
+      alternative where you have one. End with a line: \
       'Signal: AGREE | AGREE_WITH_CAVEATS | DISAGREE | NEEDS_INFO'. \
       On the first round you MUST raise at least one substantive objection — do not \
       agree yet. Do not modify any files."
    ```
 
-   **Round 1 only — ground the challenger in the codebase.** Codex runs
-   read-only and starts cold; a design critique that ignores the code it has to
-   live in is weak. Before the first turn, write a short `## Repo context`
-   section into the discussion file (or a `/tmp/repo-context.md` you reference):
-   the relevant files you found, the conventions and constraints they imply, and
-   anything Codex must not break. The challenger reads it from the discussion
-   file along with the proposal, so its objections are anchored to the actual
-   system, not the design in the abstract.
+   `--cd "$(pwd)"` runs Codex in the repo so it can read those files directly;
+   `--skip-git-repo-check` avoids the trusted-directory refusal.
+
+   **Round 1 only — point the challenger at the code; don't summarize it for
+   it.** Codex runs read-only and starts cold. Write the `## Repo context`
+   section as an **index of files to read** — each path plus one line on why it
+   matters and any invariant it must not break. This list is a *pointer*, **not
+   the evidence**: the prompt above `--cd`s Codex into the repo and tells it to
+   open those files itself, so its objections are anchored to the actual code —
+   including the negative space (an omitted invariant, a stale command, a
+   sibling-skill mismatch) that a prose digest silently hides. Never let the
+   digest stand in for the read.
 
 2. **Your turn.** Read Codex's turn. Address each objection honestly — concede
    what's right, defend what's wrong with reasons, revise the proposal. Append a
