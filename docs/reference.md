@@ -62,7 +62,7 @@ codex --version
 
 | Flag | Purpose |
 |------|---------|
-| `--full-auto` | Low-friction mode (recommended for most tasks) |
+| `--sandbox workspace-write` | Low-friction mode (recommended for most tasks) |
 | `--json` | Structured JSON output |
 | `--output-last-message <file>` | Save results to file |
 | `--model <model>` | Override model selection |
