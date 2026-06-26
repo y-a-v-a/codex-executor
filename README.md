@@ -86,3 +86,7 @@ the reasoning trail can be committed or ignored as you prefer.
 - **[docs/testing.md](./docs/testing.md)** — Testing and verification guide
 - [Claude Code skills docs](https://code.claude.com/docs/en/skills)
 - [Codex CLI reference](https://developers.openai.com/codex/cli/reference)
+
+---
+
+© 2026 Vincent Bruijn · [vebruijn@gmail.com](mailto:vebruijn@gmail.com)
