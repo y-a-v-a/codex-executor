@@ -1,7 +1,7 @@
 ---
 name: codex-review
 description: Cross-model code review with OpenAI Codex. A different model reviews the diff, findings are triaged by severity, and contested findings are reconciled with Codex before you act — so Claude-authored changes get reviewed without self-review bias.
-argument-hint: [--uncommitted | --base <branch> | --commit <sha>] [--focus security|performance|correctness|tests] [--intent "<what the change should do>"]
+argument-hint: '[--uncommitted | --base <branch> | --commit <sha>] [--focus security|performance|correctness|tests] [--intent "<what the change should do>"]'
 disable-model-invocation: true
 allowed-tools: Bash(codex *), Bash(git diff:*), Bash(git log:*), Read, Write, Edit, Glob, Grep
 hooks:

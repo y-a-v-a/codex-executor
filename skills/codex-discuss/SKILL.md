@@ -1,7 +1,7 @@
 ---
 name: codex-discuss
 description: Reach agreement with OpenAI Codex on a design, plan, or approach through a turn-based discussion in a shared markdown file. Use during ideation or planning when you want a second model to challenge and sharpen an approach before any code is written.
-argument-hint: [topic or question to work through]
+argument-hint: "[topic or question to work through]"
 disable-model-invocation: true
 allowed-tools: Bash(codex *), Read, Write, Edit, Glob, Grep
 hooks:

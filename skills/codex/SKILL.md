@@ -1,7 +1,7 @@
 ---
 name: codex
 description: Delegate a coding task to OpenAI Codex CLI for implementation. Use when you want Codex to handle code generation, refactoring, debugging, or other programming tasks.
-argument-hint: [task description]
+argument-hint: "[task description]"
 disable-model-invocation: true
 allowed-tools: Bash(codex *), Read, Glob, Grep
 hooks:

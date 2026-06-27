@@ -1,7 +1,7 @@
 ---
 name: codex-validate
 description: Validate the codex, codex-review, and codex-discuss skills end-to-end in a session where the Codex CLI is available — preflight, hook unit tests, and per-skill smoke tests that prove context actually reaches Codex — then self-improve by recording each run and tightening checks when something breaks. Use when codex is installed and you want to confirm the skills still work.
-argument-hint: [all | codex | codex-review | codex-discuss | hooks | drift] [--fix]
+argument-hint: "[all | codex | codex-review | codex-discuss | hooks | drift] [--fix]"
 disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 hooks:
